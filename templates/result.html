@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultado</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef1f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 50px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            color: #444;
+            margin-top: 25px;
+            font-weight: bold;
+        }
+
+        .img-box {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        img {
+            border-radius: 10px;
+            border: 3px solid #ddd;
+        }
+
+        .card {
+            background: #f8f9fc;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border: 1px solid #d0d7e2;
+            box-shadow: 0px 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .result-row {
+            margin-bottom: 10px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #111;
+            display: inline-block;
+            width: 140px;
+        }
+
+        .value {
+            font-size: 18px;
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        .json-box {
+            background: #111;
+            color: #22ff22;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #1e40af;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>Resultado del Análisis</h1>
+
+        <div class="section-title">Imagen analizada:</div>
+        <div class="img-box">
+            <img src="/{{ image_path }}" width="300">
+        </div>
+
+        <div class="section-title">Predicción:</div>
+
+        <!-- Tarjeta donde se mostrarán los valores -->
+        <div class="card">
+            <div class="result-row">
+                <span class="label">Clase detectada:</span>
+                <span class="value" id="pred-class"></span>
+            </div>
+
+            <div class="result-row">
+                <span class="label">Confianza:</span>
+                <span class="value" id="pred-confidence"></span>
+            </div>
+
+            <div class="result-row">
+                <span class="label">Class ID:</span>
+                <span class="value" id="pred-id"></span>
+            </div>
+        </div>
+
+        <div class="section-title">JSON original:</div>
+        <div class="json-box">{{ result }}</div>
+
+        <a href="/" class="back-btn">Volver</a>
+    </div>
+
+
+    <!-- PROCESAR EL JSON PARA EXTRAER LA INFORMACIÓN DEL MODELO -->
+    <script>
+        // Convertimos el resultado a JSON real
+        const data = {{ result | tojson }};
+
+        if (data.predictions && data.predictions.length > 0) {
+            const pred = data.predictions[0];
+
+            document.getElementById("pred-class").textContent = pred.class;
+            document.getElementById("pred-confidence").textContent =
+                (pred.confidence * 100).toFixed(2) + "%";
+            document.getElementById("pred-id").textContent = pred.class_id;
+        } else {
+            document.getElementById("pred-class").textContent = "Sin detecciones";
+            document.getElementById("pred-confidence").textContent = "-";
+            document.getElementById("pred-id").textContent = "-";
+        }
+    </script>
+
+</body>
+</html>
